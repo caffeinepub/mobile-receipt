@@ -1,0 +1,43 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-14T08:05:57.773Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 1,
+    "implemented": 1,
+    "items": [
+      {
+        "id": "REQ-19",
+        "summary": "Update the Create Bill item entry UI so each bill line item description can be filled either by selecting an existing Item Master (catalogue) entry or by manually typing a custom description when the item is not available in the local database.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/models/types.ts",
+          "frontend/src/pages/CreateBillPage.tsx",
+          "frontend/src/pdf/generateBillPdf.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/models/types.ts",
+          "frontend/src/pages/CreateBillPage.tsx",
+          "frontend/src/pdf/generateBillPdf.ts"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/models/types.ts",
+    "frontend/src/pages/CreateBillPage.tsx",
+    "frontend/src/pdf/generateBillPdf.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-14T08:05:57.770Z",
+  "summary": "REQ-19 is largely addressed by extending the BillItem model to support manual vs catalogue description entry and updating Create Bill logic to toggle modes and auto-fill price/GST from Item Master. Manual descriptions are also reflected in PDF generation via item.description. One acceptance criterion appears not fully met: switching modes does not recalculate totals immediately (and does not reset price/GST), which can leave totals inconsistent until another field change triggers recalculation.",
+  "missing_requirements": [
+    {
+      "id": "REQ-19",
+      "requirement": "Switching between catalogue selection and manual entry for the same line item updates the stored `description` value correctly and does not break total calculations.",
+      "reason": "The mode toggle resets `description` and `catalogueItemId`, but does not recalculate `totalPrice` (nor reset basePrice/gst). This can leave total calculations stale/inconsistent immediately after switching modes until another update triggers recalculation.",
+      "evidence": [
+        "frontend/src/pages/CreateBillPage.tsx (toggleDescriptionMode resets fields but does not call calculateItemTotal / update totalPrice)"
+      ]
+    }
+  ],
+  "hallucinated_features": [],
+  "confidence": 0.68,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/models/types.ts",
+    "frontend/src/pages/CreateBillPage.tsx",
+    "frontend/src/pdf/generateBillPdf.ts",
+    "project_state.json"
+  ]
+}

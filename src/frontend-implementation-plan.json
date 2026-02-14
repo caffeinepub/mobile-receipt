@@ -1,0 +1,35 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Manual bill item description option in Create Bill",
+  "requirements": [
+    {
+      "id": "REQ-19",
+      "summary": "Allow each bill line item description to come from either Item Master (catalogue) selection or manual free-text entry, while preserving auto-fill and existing totals/preview/save/PDF flows.",
+      "acceptanceCriteria": [
+        "On the Create Bill page, each line item provides a clear way to choose between selecting from the catalogue and entering a custom description manually.",
+        "When a catalogue item is selected, base price and GST are auto-filled from the selected Item Master record (existing behavior is preserved).",
+        "When a custom/manual description is entered, the description field accepts free text and does not require a matching Item Master entry.",
+        "Switching between catalogue selection and manual entry for the same line item updates the stored `description` value correctly and does not break total calculations.",
+        "Bill Preview displays the manually entered description exactly as entered, and it is included in the saved bill data and generated PDF output (via the existing draft/save flows)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/models/types.ts",
+          "operation": "modify",
+          "description": "Extend the BillItem type to support tracking whether the description is sourced from the catalogue or entered manually (e.g., a discriminant like descriptionMode plus an optional catalogue reference), while keeping `description` as the canonical saved/displayed value used by preview, saving, and PDF generation."
+        },
+        {
+          "path": "frontend/src/pages/CreateBillPage.tsx",
+          "operation": "modify",
+          "description": "Update the line-item Description cell UI to support a per-row toggle between Catalogue and Manual modes. Use existing shadcn-ui components (e.g., Select for mode choice and catalogue picklist; Input for manual text) to keep the app offline-first and avoid any network dependency. Verify the component's usage instructions before implementing. Update item state logic so: (1) selecting a catalogue item auto-fills basePrice and gst (preserving current behavior), (2) manual mode allows free text without attempting catalogue auto-match, (3) switching modes updates the stored `description` consistently and triggers the existing total recalculation path."
+        },
+        {
+          "path": "frontend/src/pdf/generateBillPdf.ts",
+          "operation": "modify",
+          "description": "Ensure manually entered descriptions render correctly in the generated HTML/PDF output by safely interpolating the bill item `description` as text (e.g., HTML-escape before insertion) while preserving the visible characters exactly as entered. Keep the existing draft/save flows and offline-first behavior unchanged."
+        }
+      ]
+    }
+  ]
+}

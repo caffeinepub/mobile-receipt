@@ -1,0 +1,25 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-update-the-create-bill-item-entry-ui-so-each-bill-line-item-description-can-be-filled-either-by-selecting-an-existing-item-master-catalogue-entry-or-by-manually-typing-a-custom-description-when-the-item-is-not-available-in-the-local-database",
+      "featureTitle": "Update the Create Bill item entry UI so each bill line item description can be filled either by selecting an existing Item Master (catalogue) entry or by manually typing a custom description when the item is not available in the local database.",
+      "files": [
+        "frontend/src/models/types.ts",
+        "frontend/src/pages/CreateBillPage.tsx",
+        "frontend/src/pdf/generateBillPdf.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-19"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
