@@ -42,8 +42,6 @@ export default function CreateBillPage() {
     const newItem: BillItem = {
       itemId: Date.now().toString(),
       billId: '',
-      slNo: items.length + 1,
-      purchaseDate: date,
       description: '',
       descriptionMode: 'catalogue',
       basePrice: 0,
@@ -51,6 +49,7 @@ export default function CreateBillPage() {
       discount: 0,
       gst: settings.defaultGst || 0,
       totalPrice: 0,
+      updatedAt: Date.now(),
     };
     setItems([...items, newItem]);
   };
@@ -62,7 +61,7 @@ export default function CreateBillPage() {
   const updateItem = (itemId: string, field: keyof BillItem, value: any) => {
     setItems(items.map(item => {
       if (item.itemId === itemId) {
-        const updated = { ...item, [field]: value };
+        const updated = { ...item, [field]: value, updatedAt: Date.now() };
         
         // Auto-fill from item master when in catalogue mode
         if (field === 'description' && item.descriptionMode === 'catalogue') {
@@ -97,6 +96,7 @@ export default function CreateBillPage() {
           descriptionMode: newMode,
           description: '',
           catalogueItemId: undefined,
+          updatedAt: Date.now(),
         };
       }
       return item;

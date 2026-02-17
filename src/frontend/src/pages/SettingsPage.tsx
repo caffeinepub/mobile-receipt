@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useSettings } from '@/settings/useSettings';
+import { SyncCard } from '@/components/sync/SyncCard';
 import { toast } from 'sonner';
 import { Upload } from 'lucide-react';
 
@@ -71,6 +72,8 @@ export default function SettingsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <SyncCard />
+
         <Card>
           <CardHeader>
             <CardTitle>Company Information</CardTitle>

@@ -2,6 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
+import { APP_NAME } from '@/constants/app';
 
 export default function StartPage() {
   const navigate = useNavigate();
@@ -13,12 +14,12 @@ export default function StartPage() {
           <div className="mb-8 flex justify-center">
             <img 
               src="/assets/generated/mobile-receipt-logo.dim_512x512.png" 
-              alt="Mobile Receipt Logo" 
+              alt={`${APP_NAME} Logo`}
               className="h-32 w-32 rounded-2xl shadow-md"
             />
           </div>
           <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Mobile Receipt
+            {APP_NAME}
           </h1>
           <p className="text-muted-foreground text-lg mb-8">
             Your complete offline billing solution for small businesses

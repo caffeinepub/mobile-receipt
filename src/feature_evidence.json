@@ -2,22 +2,26 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-create-bill-item-entry-ui-so-each-bill-line-item-description-can-be-filled-either-by-selecting-an-existing-item-master-catalogue-entry-or-by-manually-typing-a-custom-description-when-the-item-is-not-available-in-the-local-database",
-      "featureTitle": "Update the Create Bill item entry UI so each bill line item description can be filled either by selecting an existing Item Master (catalogue) entry or by manually typing a custom description when the item is not available in the local database.",
+      "featureId": "feature-ensure-the-application-name-is-consistently-displayed-as-exactly-mobile-receipt-across-all-pages-and-layouts-by-centralizing-the-app-name-in-a-single-frontend-constant-and-reusing-it-wherever-the-app-name-is-rendered-e-g-start-page-heading-navigation-brand-text-footer-copyright-text-logo-alt-text-and-document-tab-title",
+      "featureTitle": "Ensure the application name is consistently displayed as exactly “Mobile Receipt” across all pages and layouts by centralizing the app name in a single frontend constant and reusing it wherever the app name is rendered (e.g., Start page heading, navigation brand text, footer copyright text, logo alt text, and document/tab title).",
       "files": [
-        "frontend/src/models/types.ts",
-        "frontend/src/pages/CreateBillPage.tsx",
-        "frontend/src/pdf/generateBillPdf.ts"
+        "frontend/index.html",
+        "frontend/src/components/layout/AppLayout.tsx",
+        "frontend/src/components/layout/ResponsiveNav.tsx",
+        "frontend/src/constants/app.ts",
+        "frontend/src/pages/StartPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-19"
+        "REQ-1"
       ],
       "confidence": "high"
     }

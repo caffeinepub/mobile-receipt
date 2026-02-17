@@ -1,25 +1,26 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-14T08:05:57.770Z",
-  "summary": "REQ-19 is largely addressed by extending the BillItem model to support manual vs catalogue description entry and updating Create Bill logic to toggle modes and auto-fill price/GST from Item Master. Manual descriptions are also reflected in PDF generation via item.description. One acceptance criterion appears not fully met: switching modes does not recalculate totals immediately (and does not reset price/GST), which can leave totals inconsistent until another field change triggers recalculation.",
-  "missing_requirements": [
+  "generatedAt": "2026-02-14T19:14:26.216Z",
+  "summary": "REQ-1 is largely implemented: a single APP_NAME constant was added and reused for nav brand text, start page heading, logo alt text, footer copyright, and document title updates on route changes. However, the diff also introduces new footer attribution/branding content that was not requested and may violate the non-goals/constraints about limiting changes to app-name consistency.",
+  "missing_requirements": [],
+  "hallucinated_features": [
     {
-      "id": "REQ-19",
-      "requirement": "Switching between catalogue selection and manual entry for the same line item updates the stored `description` value correctly and does not break total calculations.",
-      "reason": "The mode toggle resets `description` and `catalogueItemId`, but does not recalculate `totalPrice` (nor reset basePrice/gst). This can leave total calculations stale/inconsistent immediately after switching modes until another update triggers recalculation.",
+      "description": "Added a new footer attribution line/link (“Built with ❤️ using caffeine.ai”) and related outbound tracking URL logic, which is unrelated to app-name consistency and changes visible branding/identity beyond the app name.",
+      "reason": "BuildRequest explicitly limits scope to app-name rendering/usage consistency and lists rebranding/visual identity changes beyond app-name text consistency as non-goals. Adding a new attribution line and link is additional UI/branding not requested.",
       "evidence": [
-        "frontend/src/pages/CreateBillPage.tsx (toggleDescriptionMode resets fields but does not call calculateItemTotal / update totalPrice)"
+        "frontend/src/components/layout/AppLayout.tsx"
       ]
     }
   ],
-  "hallucinated_features": [],
-  "confidence": 0.68,
+  "confidence": 0.74,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/models/types.ts",
-    "frontend/src/pages/CreateBillPage.tsx",
-    "frontend/src/pdf/generateBillPdf.ts",
+    "frontend/index.html",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/components/layout/ResponsiveNav.tsx",
+    "frontend/src/constants/app.ts",
+    "frontend/src/pages/StartPage.tsx",
     "project_state.json"
   ]
 }

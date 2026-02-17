@@ -1,23 +1,28 @@
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEffect } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Search, Eye, Download } from 'lucide-react';
-import { getBills } from '@/storage/repositories';
+import { Search, Eye, Download, FileText, RefreshCw } from 'lucide-react';
+import { getBillPdf, getBillById, getBillItemsByBillId, saveBillPdf } from '@/storage/repositories';
+import { generateBillPdf } from '@/pdf/generateBillPdf';
+import { useSettings } from '@/settings/useSettings';
+import { useLocalBills } from '@/hooks/useLocalBills';
+import { toast } from 'sonner';
 import type { Bill } from '@/models/types';
+import { useState } from 'react';
 
 export default function SavedBillsPage() {
-  const [bills, setBills] = useState<Bill[]>([]);
+  const navigate = useNavigate();
+  const { settings } = useSettings();
+  const { bills, invalidate } = useLocalBills();
   const [filteredBills, setFilteredBills] = useState<Bill[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-
-  useEffect(() => {
-    loadBills();
-  }, []);
+  const [regeneratingPdf, setRegeneratingPdf] = useState<string | null>(null);
 
   useEffect(() => {
     if (searchTerm) {
@@ -31,21 +36,106 @@ export default function SavedBillsPage() {
     }
   }, [searchTerm, bills]);
 
-  const loadBills = async () => {
-    const allBills = await getBills();
-    setBills(allBills);
-    setFilteredBills(allBills);
-  };
-
   const handleViewBill = (bill: Bill) => {
     setSelectedBill(bill);
     setDialogOpen(true);
   };
 
-  const handleOpenPdf = (bill: Bill) => {
-    if (bill.pdfPath) {
-      window.open(bill.pdfPath, '_blank');
+  const handleViewBillPreview = (bill: Bill) => {
+    navigate({ to: '/bill-preview/$billId', params: { billId: bill.billId } });
+  };
+
+  const regeneratePdf = async (billId: string): Promise<Blob | null> => {
+    try {
+      setRegeneratingPdf(billId);
+      
+      const bill = await getBillById(billId);
+      if (!bill) {
+        toast.error('Bill not found');
+        return null;
+      }
+
+      const items = await getBillItemsByBillId(billId);
+      
+      const billData = {
+        billId: bill.billId,
+        billNumber: bill.billNumber,
+        customerName: bill.customerName,
+        phone: bill.phone,
+        address: bill.address,
+        date: bill.date,
+        totalAmount: bill.totalAmount,
+        items: items.map(item => ({
+          itemId: item.itemId,
+          description: item.description,
+          basePrice: item.basePrice,
+          quantity: item.quantity,
+          discount: item.discount,
+          gst: item.gst,
+          totalPrice: item.totalPrice,
+        })),
+      };
+
+      const pdfBlob = await generateBillPdf(billData, settings);
+      await saveBillPdf(billId, pdfBlob);
+      
+      toast.success('PDF regenerated successfully');
+      return pdfBlob;
+    } catch (error) {
+      console.error('Error regenerating PDF:', error);
+      toast.error('Failed to regenerate PDF');
+      return null;
+    } finally {
+      setRegeneratingPdf(null);
     }
+  };
+
+  const handleOpenPdf = async (bill: Bill) => {
+    try {
+      let pdfBlob = await getBillPdf(bill.billId);
+      
+      if (!pdfBlob) {
+        toast.info('PDF not found. Regenerating...');
+        pdfBlob = await regeneratePdf(bill.billId);
+        if (!pdfBlob) return;
+      }
+
+      const url = URL.createObjectURL(pdfBlob);
+      window.open(url, '_blank');
+      
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      console.error('Error opening PDF:', error);
+      toast.error('Failed to open PDF. Please try regenerating it.');
+    }
+  };
+
+  const handleDownloadPdf = async (bill: Bill) => {
+    try {
+      let pdfBlob = await getBillPdf(bill.billId);
+      
+      if (!pdfBlob) {
+        toast.info('PDF not found. Regenerating...');
+        pdfBlob = await regeneratePdf(bill.billId);
+        if (!pdfBlob) return;
+      }
+
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Bill_${bill.billNumber}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      toast.success('PDF downloaded successfully');
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      toast.error('Failed to download PDF. Please try regenerating it.');
+    }
+  };
+
+  const handleRegeneratePdf = async (bill: Bill) => {
+    await regeneratePdf(bill.billId);
   };
 
   return (
@@ -101,18 +191,36 @@ export default function SavedBillsPage() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleViewBill(bill)}
+                            title="View Details"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
-                          {bill.pdfPath && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleOpenPdf(bill)}
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                          )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleViewBillPreview(bill)}
+                            title="View Bill Preview"
+                          >
+                            <FileText className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDownloadPdf(bill)}
+                            title="Download PDF"
+                            disabled={regeneratingPdf === bill.billId}
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRegeneratePdf(bill)}
+                            title="Regenerate PDF"
+                            disabled={regeneratingPdf === bill.billId}
+                          >
+                            <RefreshCw className={`h-4 w-4 ${regeneratingPdf === bill.billId ? 'animate-spin' : ''}`} />
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -133,36 +241,30 @@ export default function SavedBillsPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Bill Number</p>
-                  <p className="font-semibold">{selectedBill.billNumber}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Bill Number</p>
+                  <p className="text-lg font-semibold">{selectedBill.billNumber}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Date</p>
-                  <p className="font-semibold">{new Date(selectedBill.date).toLocaleDateString()}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Date</p>
+                  <p className="text-lg">{new Date(selectedBill.date).toLocaleDateString()}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Customer Name</p>
-                  <p className="font-semibold">{selectedBill.customerName}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Customer Name</p>
+                  <p className="text-lg">{selectedBill.customerName}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Phone</p>
-                  <p className="font-semibold">{selectedBill.phone || '-'}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Phone</p>
+                  <p className="text-lg">{selectedBill.phone || '-'}</p>
                 </div>
                 <div className="col-span-2">
-                  <p className="text-sm text-muted-foreground">Address</p>
-                  <p className="font-semibold">{selectedBill.address || '-'}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Address</p>
+                  <p className="text-lg">{selectedBill.address || '-'}</p>
                 </div>
                 <div className="col-span-2">
-                  <p className="text-sm text-muted-foreground">Total Amount</p>
-                  <p className="text-2xl font-bold text-primary">₹{selectedBill.totalAmount.toFixed(2)}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Total Amount</p>
+                  <p className="text-2xl font-bold">₹{selectedBill.totalAmount.toFixed(2)}</p>
                 </div>
               </div>
-              {selectedBill.pdfPath && (
-                <Button onClick={() => handleOpenPdf(selectedBill)} className="w-full">
-                  <Download className="h-4 w-4 mr-2" />
-                  Open PDF
-                </Button>
-              )}
             </div>
           )}
         </DialogContent>

@@ -8,13 +8,27 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getCategories, getItems, saveCategory, saveItem, deleteCategory, deleteItem } from '@/storage/repositories';
 import type { Category, ItemMaster } from '@/models/types';
 import { toast } from 'sonner';
 
 export default function ItemsCategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [items, setItems] = useState<ItemMaster[]>([]);
+  const queryClient = useQueryClient();
+  
+  const categoriesQuery = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  });
+
+  const itemsQuery = useQuery({
+    queryKey: ['items'],
+    queryFn: getItems,
+  });
+
+  const categories = categoriesQuery.data || [];
+  const items = itemsQuery.data || [];
+
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [itemDialogOpen, setItemDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -26,17 +40,6 @@ export default function ItemsCategoriesPage() {
   const [basePrice, setBasePrice] = useState('');
   const [gstPercentage, setGstPercentage] = useState('');
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    const cats = await getCategories();
-    const itms = await getItems();
-    setCategories(cats);
-    setItems(itms);
-  };
-
   const handleSaveCategory = async () => {
     if (!categoryName.trim()) {
       toast.error('Please enter category name');
@@ -46,13 +49,14 @@ export default function ItemsCategoriesPage() {
     const category: Category = {
       categoryId: editingCategory?.categoryId || Date.now().toString(),
       categoryName: categoryName.trim(),
+      updatedAt: Date.now(),
     };
 
     await saveCategory(category);
     toast.success(editingCategory ? 'Category updated' : 'Category added');
     setCategoryDialogOpen(false);
     resetCategoryForm();
-    loadData();
+    queryClient.invalidateQueries({ queryKey: ['categories'] });
   };
 
   const handleSaveItem = async () => {
@@ -67,13 +71,14 @@ export default function ItemsCategoriesPage() {
       categoryId: selectedCategoryId,
       basePrice: parseFloat(basePrice),
       gstPercentage: parseFloat(gstPercentage) || 0,
+      updatedAt: Date.now(),
     };
 
     await saveItem(item);
     toast.success(editingItem ? 'Item updated' : 'Item added');
     setItemDialogOpen(false);
     resetItemForm();
-    loadData();
+    queryClient.invalidateQueries({ queryKey: ['items'] });
   };
 
   const handleEditCategory = (category: Category) => {
@@ -95,7 +100,7 @@ export default function ItemsCategoriesPage() {
     if (confirm('Are you sure you want to delete this category?')) {
       await deleteCategory(categoryId);
       toast.success('Category deleted');
-      loadData();
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
     }
   };
 
@@ -103,7 +108,7 @@ export default function ItemsCategoriesPage() {
     if (confirm('Are you sure you want to delete this item?')) {
       await deleteItem(itemId);
       toast.success('Item deleted');
-      loadData();
+      queryClient.invalidateQueries({ queryKey: ['items'] });
     }
   };
 
@@ -238,7 +243,6 @@ export default function ItemsCategoriesPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Category Dialog */}
       <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -266,7 +270,6 @@ export default function ItemsCategoriesPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Item Dialog */}
       <Dialog open={itemDialogOpen} onOpenChange={setItemDialogOpen}>
         <DialogContent>
           <DialogHeader>

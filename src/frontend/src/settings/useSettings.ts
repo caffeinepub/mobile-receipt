@@ -15,7 +15,7 @@ export function useSettings() {
 
   const updateSettings = async (newSettings: Partial<Settings>) => {
     const current = settingsQuery.data || defaultSettings;
-    const updated = { ...current, ...newSettings };
+    const updated = { ...current, ...newSettings, updatedAt: Date.now() };
     await saveSettings(updated);
     queryClient.invalidateQueries({ queryKey: ['settings'] });
   };

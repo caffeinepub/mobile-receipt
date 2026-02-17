@@ -8,10 +8,203 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
-export const idlService = IDL.Service({});
+export const _CaffeineStorageCreateCertificateResult = IDL.Record({
+  'method' : IDL.Text,
+  'blob_hash' : IDL.Text,
+});
+export const _CaffeineStorageRefillInformation = IDL.Record({
+  'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const _CaffeineStorageRefillResult = IDL.Record({
+  'success' : IDL.Opt(IDL.Bool),
+  'topped_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const UserRole = IDL.Variant({
+  'admin' : IDL.Null,
+  'user' : IDL.Null,
+  'guest' : IDL.Null,
+});
+export const Time = IDL.Int;
+export const BillItem = IDL.Record({
+  'itemId' : IDL.Text,
+  'quantity' : IDL.Nat,
+  'price' : IDL.Nat,
+});
+export const Bill = IDL.Record({
+  'id' : IDL.Text,
+  'total' : IDL.Nat,
+  'date' : IDL.Text,
+  'updatedAt' : Time,
+  'items' : IDL.Vec(BillItem),
+});
+export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const Category = IDL.Record({
+  'id' : IDL.Text,
+  'icon' : IDL.Text,
+  'name' : IDL.Text,
+  'updatedAt' : Time,
+});
+export const Item = IDL.Record({
+  'id' : IDL.Text,
+  'categoryId' : IDL.Text,
+  'name' : IDL.Text,
+  'updatedAt' : Time,
+  'price' : IDL.Nat,
+});
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
+export const Settings = IDL.Record({
+  'updatedAt' : Time,
+  'currency' : IDL.Text,
+});
+
+export const idlService = IDL.Service({
+  '_caffeineStorageBlobIsLive' : IDL.Func(
+      [IDL.Vec(IDL.Nat8)],
+      [IDL.Bool],
+      ['query'],
+    ),
+  '_caffeineStorageBlobsToDelete' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      ['query'],
+    ),
+  '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [],
+      [],
+    ),
+  '_caffeineStorageCreateCertificate' : IDL.Func(
+      [IDL.Text],
+      [_CaffeineStorageCreateCertificateResult],
+      [],
+    ),
+  '_caffeineStorageRefillCashier' : IDL.Func(
+      [IDL.Opt(_CaffeineStorageRefillInformation)],
+      [_CaffeineStorageRefillResult],
+      [],
+    ),
+  '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
+  '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'getBills' : IDL.Func([], [IDL.Vec(Bill)], ['query']),
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
+  'getItems' : IDL.Func([], [IDL.Vec(Item)], ['query']),
+  'getPdfBlob' : IDL.Func([IDL.Text], [IDL.Opt(ExternalBlob)], ['query']),
+  'getSettings' : IDL.Func([], [IDL.Opt(Settings)], ['query']),
+  'getUserProfile' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Opt(UserProfile)],
+      ['query'],
+    ),
+  'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'syncBill' : IDL.Func([Bill], [], []),
+  'syncCategory' : IDL.Func([Category], [], []),
+  'syncItem' : IDL.Func([Item], [], []),
+  'syncSettings' : IDL.Func([Settings], [], []),
+  'uploadPdfBlob' : IDL.Func([IDL.Text, ExternalBlob], [], []),
+});
 
 export const idlInitArgs = [];
 
-export const idlFactory = ({ IDL }) => { return IDL.Service({}); };
+export const idlFactory = ({ IDL }) => {
+  const _CaffeineStorageCreateCertificateResult = IDL.Record({
+    'method' : IDL.Text,
+    'blob_hash' : IDL.Text,
+  });
+  const _CaffeineStorageRefillInformation = IDL.Record({
+    'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const _CaffeineStorageRefillResult = IDL.Record({
+    'success' : IDL.Opt(IDL.Bool),
+    'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const UserRole = IDL.Variant({
+    'admin' : IDL.Null,
+    'user' : IDL.Null,
+    'guest' : IDL.Null,
+  });
+  const Time = IDL.Int;
+  const BillItem = IDL.Record({
+    'itemId' : IDL.Text,
+    'quantity' : IDL.Nat,
+    'price' : IDL.Nat,
+  });
+  const Bill = IDL.Record({
+    'id' : IDL.Text,
+    'total' : IDL.Nat,
+    'date' : IDL.Text,
+    'updatedAt' : Time,
+    'items' : IDL.Vec(BillItem),
+  });
+  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const Category = IDL.Record({
+    'id' : IDL.Text,
+    'icon' : IDL.Text,
+    'name' : IDL.Text,
+    'updatedAt' : Time,
+  });
+  const Item = IDL.Record({
+    'id' : IDL.Text,
+    'categoryId' : IDL.Text,
+    'name' : IDL.Text,
+    'updatedAt' : Time,
+    'price' : IDL.Nat,
+  });
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
+  const Settings = IDL.Record({ 'updatedAt' : Time, 'currency' : IDL.Text });
+  
+  return IDL.Service({
+    '_caffeineStorageBlobIsLive' : IDL.Func(
+        [IDL.Vec(IDL.Nat8)],
+        [IDL.Bool],
+        ['query'],
+      ),
+    '_caffeineStorageBlobsToDelete' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        ['query'],
+      ),
+    '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [],
+        [],
+      ),
+    '_caffeineStorageCreateCertificate' : IDL.Func(
+        [IDL.Text],
+        [_CaffeineStorageCreateCertificateResult],
+        [],
+      ),
+    '_caffeineStorageRefillCashier' : IDL.Func(
+        [IDL.Opt(_CaffeineStorageRefillInformation)],
+        [_CaffeineStorageRefillResult],
+        [],
+      ),
+    '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
+    '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'getBills' : IDL.Func([], [IDL.Vec(Bill)], ['query']),
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
+    'getItems' : IDL.Func([], [IDL.Vec(Item)], ['query']),
+    'getPdfBlob' : IDL.Func([IDL.Text], [IDL.Opt(ExternalBlob)], ['query']),
+    'getSettings' : IDL.Func([], [IDL.Opt(Settings)], ['query']),
+    'getUserProfile' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(UserProfile)],
+        ['query'],
+      ),
+    'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'syncBill' : IDL.Func([Bill], [], []),
+    'syncCategory' : IDL.Func([Category], [], []),
+    'syncItem' : IDL.Func([Item], [], []),
+    'syncSettings' : IDL.Func([Settings], [], []),
+    'uploadPdfBlob' : IDL.Func([IDL.Text, ExternalBlob], [], []),
+  });
+};
 
 export const init = ({ IDL }) => { return []; };

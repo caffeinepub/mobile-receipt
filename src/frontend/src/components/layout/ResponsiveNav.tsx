@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Menu, LayoutDashboard, FileText, Package, Settings, Download, Receipt } from 'lucide-react';
+import { APP_NAME } from '@/constants/app';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -30,8 +31,8 @@ export default function ResponsiveNav() {
       <div className="md:hidden border-b bg-card">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/assets/generated/mobile-receipt-logo.dim_512x512.png" alt="Mobile Receipt" className="h-8 w-8" />
-            <span className="font-semibold text-lg">Mobile Receipt</span>
+            <img src="/assets/generated/mobile-receipt-logo.dim_512x512.png" alt={APP_NAME} className="h-8 w-8" />
+            <span className="font-semibold text-lg">{APP_NAME}</span>
           </div>
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -42,8 +43,8 @@ export default function ResponsiveNav() {
             <SheetContent side="left" className="w-64">
               <div className="flex flex-col gap-4 mt-8">
                 <div className="flex items-center gap-2 mb-4">
-                  <img src="/assets/generated/mobile-receipt-logo.dim_512x512.png" alt="Mobile Receipt" className="h-10 w-10" />
-                  <span className="font-bold text-xl">Mobile Receipt</span>
+                  <img src="/assets/generated/mobile-receipt-logo.dim_512x512.png" alt={APP_NAME} className="h-10 w-10" />
+                  <span className="font-bold text-xl">{APP_NAME}</span>
                 </div>
                 {navItems.map((item) => {
                   const Icon = item.icon;
@@ -70,8 +71,8 @@ export default function ResponsiveNav() {
       <div className="hidden md:block border-b bg-card">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-6 mb-4">
-            <img src="/assets/generated/mobile-receipt-logo.dim_512x512.png" alt="Mobile Receipt" className="h-10 w-10" />
-            <span className="font-bold text-2xl">Mobile Receipt</span>
+            <img src="/assets/generated/mobile-receipt-logo.dim_512x512.png" alt={APP_NAME} className="h-10 w-10" />
+            <span className="font-bold text-2xl">{APP_NAME}</span>
           </div>
           <Tabs value={location.pathname} onValueChange={(value) => navigate({ to: value })}>
             <TabsList className="w-full justify-start">

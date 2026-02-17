@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-14T08:05:57.773Z",
+  "generatedAt": "2026-02-14T19:14:26.218Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,18 +11,23 @@
     "implemented": 1,
     "items": [
       {
-        "id": "REQ-19",
-        "summary": "Update the Create Bill item entry UI so each bill line item description can be filled either by selecting an existing Item Master (catalogue) entry or by manually typing a custom description when the item is not available in the local database.",
+        "id": "REQ-1",
+        "summary": "Ensure the application name is consistently displayed as exactly “Mobile Receipt” across all pages and layouts by centralizing the app name in a single frontend constant and reusing it wherever the app name is rendered (e.g., Start page heading, navigation brand text, footer copyright text, logo alt text, and document/tab title).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/models/types.ts",
-          "frontend/src/pages/CreateBillPage.tsx",
-          "frontend/src/pdf/generateBillPdf.ts"
+          "frontend/src/constants/app.ts",
+          "frontend/src/pages/StartPage.tsx",
+          "frontend/src/components/layout/ResponsiveNav.tsx",
+          "frontend/src/components/layout/AppLayout.tsx",
+          "frontend/src/main.tsx",
+          "frontend/index.html"
         ],
         "matchedFiles": [
-          "frontend/src/models/types.ts",
-          "frontend/src/pages/CreateBillPage.tsx",
-          "frontend/src/pdf/generateBillPdf.ts"
+          "frontend/src/constants/app.ts",
+          "frontend/src/pages/StartPage.tsx",
+          "frontend/src/components/layout/ResponsiveNav.tsx",
+          "frontend/src/components/layout/AppLayout.tsx",
+          "frontend/index.html"
         ]
       }
     ]
@@ -32,9 +37,11 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/models/types.ts",
-    "frontend/src/pages/CreateBillPage.tsx",
-    "frontend/src/pdf/generateBillPdf.ts",
+    "frontend/index.html",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/components/layout/ResponsiveNav.tsx",
+    "frontend/src/constants/app.ts",
+    "frontend/src/pages/StartPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

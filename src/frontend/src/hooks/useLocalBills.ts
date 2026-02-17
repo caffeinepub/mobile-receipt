@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getBills, getBillItems } from '@/storage/repositories';
+import { getBills, getAllBillItems } from '@/storage/repositories';
 
 export function useLocalBills() {
   const queryClient = useQueryClient();
@@ -11,12 +11,15 @@ export function useLocalBills() {
 
   const billItemsQuery = useQuery({
     queryKey: ['billItems'],
-    queryFn: getBillItems,
+    queryFn: getAllBillItems,
   });
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ['bills'] });
     queryClient.invalidateQueries({ queryKey: ['billItems'] });
+    queryClient.invalidateQueries({ queryKey: ['categories'] });
+    queryClient.invalidateQueries({ queryKey: ['items'] });
+    queryClient.invalidateQueries({ queryKey: ['settings'] });
   };
 
   return {

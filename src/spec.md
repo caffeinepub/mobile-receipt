@@ -1,13 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Let users enter a bill line item description either by selecting an existing catalogue (Item Master) item or by manually typing a custom description when the item is not in the database.
+**Goal:** Keep the application name consistently displayed as exactly “Mobile Receipt” across all pages and layouts.
 
 **Planned changes:**
-- Update the Create Bill line-item UI to provide a clear choice between “select from catalogue” and “manual description” entry per line item.
-- Preserve existing behavior when a catalogue item is selected (auto-fill base price and GST from Item Master).
-- Support free-text descriptions when manual entry is chosen, without requiring an Item Master match.
-- Ensure switching between catalogue selection and manual entry updates the stored `description` correctly and keeps total calculations working.
-- Ensure Bill Preview, saved bill data, and generated PDF include the manually entered description exactly as entered via existing draft/save flows.
+- Add a single exported frontend constant for the app name set to exactly “Mobile Receipt”.
+- Replace any hard-coded app-name strings in page headings, navigation brand text, footer text, logo alt text, and document/tab title with the centralized constant.
+- Ensure the HTML document title remains “Mobile Receipt” after navigating between routes.
 
-**User-visible outcome:** On the Create Bill page, users can add items by selecting from the catalogue or by typing a custom description, and the entered/selected description appears correctly in preview and the generated PDF.
+**User-visible outcome:** The app name appears as “Mobile Receipt” everywhere it is shown (UI brand text and browser tab title), consistently across all pages.

@@ -1,33 +1,46 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Manual bill item description option in Create Bill",
+  "title": "Centralize and enforce fixed app name “Mobile Receipt” across UI and document title",
   "requirements": [
     {
-      "id": "REQ-19",
-      "summary": "Allow each bill line item description to come from either Item Master (catalogue) selection or manual free-text entry, while preserving auto-fill and existing totals/preview/save/PDF flows.",
+      "id": "REQ-1",
+      "summary": "Centralize the app name as a single exported frontend constant and reuse it for all app-brand text and the document title across routes.",
       "acceptanceCriteria": [
-        "On the Create Bill page, each line item provides a clear way to choose between selecting from the catalogue and entering a custom description manually.",
-        "When a catalogue item is selected, base price and GST are auto-filled from the selected Item Master record (existing behavior is preserved).",
-        "When a custom/manual description is entered, the description field accepts free text and does not require a matching Item Master entry.",
-        "Switching between catalogue selection and manual entry for the same line item updates the stored `description` value correctly and does not break total calculations.",
-        "Bill Preview displays the manually entered description exactly as entered, and it is included in the saved bill data and generated PDF output (via the existing draft/save flows)."
+        "All visible app-brand text in the UI matches exactly “Mobile Receipt” (including Start page, mobile/desktop nav brand, and footer).",
+        "The HTML document <title> remains “Mobile Receipt” after navigation between routes.",
+        "There is a single source of truth (one exported constant) for the app name used by the above UI locations, rather than repeated hard-coded strings."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/models/types.ts",
-          "operation": "modify",
-          "description": "Extend the BillItem type to support tracking whether the description is sourced from the catalogue or entered manually (e.g., a discriminant like descriptionMode plus an optional catalogue reference), while keeping `description` as the canonical saved/displayed value used by preview, saving, and PDF generation."
+          "path": "frontend/src/constants/app.ts",
+          "operation": "create",
+          "description": "Create and export a single source-of-truth constant (e.g., APP_NAME) whose value is exactly “Mobile Receipt”, to be reused anywhere the app name is rendered (UI brand text, alt text, and document title)."
         },
         {
-          "path": "frontend/src/pages/CreateBillPage.tsx",
+          "path": "frontend/src/pages/StartPage.tsx",
           "operation": "modify",
-          "description": "Update the line-item Description cell UI to support a per-row toggle between Catalogue and Manual modes. Use existing shadcn-ui components (e.g., Select for mode choice and catalogue picklist; Input for manual text) to keep the app offline-first and avoid any network dependency. Verify the component's usage instructions before implementing. Update item state logic so: (1) selecting a catalogue item auto-fills basePrice and gst (preserving current behavior), (2) manual mode allows free text without attempting catalogue auto-match, (3) switching modes updates the stored `description` consistently and triggers the existing total recalculation path."
+          "description": "Replace hard-coded app-name usages with the centralized app-name constant for the Start page heading and the logo alt text (ensuring the visible brand text renders exactly “Mobile Receipt”)."
         },
         {
-          "path": "frontend/src/pdf/generateBillPdf.ts",
+          "path": "frontend/src/components/layout/ResponsiveNav.tsx",
           "operation": "modify",
-          "description": "Ensure manually entered descriptions render correctly in the generated HTML/PDF output by safely interpolating the bill item `description` as text (e.g., HTML-escape before insertion) while preserving the visible characters exactly as entered. Keep the existing draft/save flows and offline-first behavior unchanged."
+          "description": "Replace hard-coded app-name usages with the centralized app-name constant for mobile/desktop navigation brand text and logo alt text (ensuring the visible brand text renders exactly “Mobile Receipt”)."
+        },
+        {
+          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Replace the hard-coded footer brand text with the centralized app-name constant, and add route-change-safe document title synchronization (set document.title to the centralized app-name constant whenever the route/location changes)."
+        },
+        {
+          "path": "frontend/src/main.tsx",
+          "operation": "modify",
+          "description": "Initialize document.title from the centralized app-name constant during app bootstrap to ensure the initial tab title is set from the single source of truth."
+        },
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Remove the hard-coded “Mobile Receipt” from the static <title> so that the document title is set exclusively by the centralized frontend constant at runtime (keeping the runtime title exactly “Mobile Receipt”)."
         }
       ]
     }

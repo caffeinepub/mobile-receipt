@@ -1,36 +1,35 @@
 {
   "kind": "build_request",
-  "title": "Allow manual bill item description when not in catalogue",
+  "title": "Keep app name fixed as “Mobile Receipt” across all pages",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-19",
-      "text": "Update the Create Bill item entry UI so each bill line item description can be filled either by selecting an existing Item Master (catalogue) entry or by manually typing a custom description when the item is not available in the local database.",
+      "id": "REQ-1",
+      "text": "Ensure the application name is consistently displayed as exactly “Mobile Receipt” across all pages and layouts by centralizing the app name in a single frontend constant and reusing it wherever the app name is rendered (e.g., Start page heading, navigation brand text, footer copyright text, logo alt text, and document/tab title).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "Item description to be added from the catalogue or manually as well if the item is not available in the database."
+          "Don't change app name. Keep it consistent in all pages. Name:- Mobile Receipt"
         ]
       },
       "acceptanceCriteria": [
-        "On the Create Bill page, each line item provides a clear way to choose between selecting from the catalogue and entering a custom description manually.",
-        "When a catalogue item is selected, base price and GST are auto-filled from the selected Item Master record (existing behavior is preserved).",
-        "When a custom/manual description is entered, the description field accepts free text and does not require a matching Item Master entry.",
-        "Switching between catalogue selection and manual entry for the same line item updates the stored `description` value correctly and does not break total calculations.",
-        "Bill Preview displays the manually entered description exactly as entered, and it is included in the saved bill data and generated PDF output (via the existing draft/save flows)."
+        "All visible app-brand text in the UI matches exactly “Mobile Receipt” (including Start page, mobile/desktop nav brand, and footer).",
+        "The HTML document <title> remains “Mobile Receipt” after navigation between routes.",
+        "There is a single source of truth (one exported constant) for the app name used by the above UI locations, rather than repeated hard-coded strings."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui (shadcn UI components); compose them as-is.",
-    "Keep the application offline-first; do not add any network dependency for this feature."
+    "Do not change the app name; it must remain exactly “Mobile Receipt”.",
+    "Do not edit files under frontend/src/components/ui (read-only).",
+    "Respect the existing routing/layout structure; only adjust app-name rendering/usage."
   ],
   "nonGoals": [
-    "Adding new backend APIs or changing the Motoko backend (not needed for this UI/data-entry change).",
-    "Automatically creating new Item Master records from manually entered descriptions."
+    "Renaming routes, features, or changing any business logic/sync behavior.",
+    "Rebranding or changing logos/visual identity beyond app-name text consistency."
   ],
   "imageRequirements": {
     "required": [],

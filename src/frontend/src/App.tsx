@@ -10,6 +10,13 @@ import SettingsPage from './pages/SettingsPage';
 import ExportBackupPage from './pages/ExportBackupPage';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/components/ui/sonner';
+import { InternetIdentityProvider } from '@/hooks/useInternetIdentity';
+import { useAutoSync } from '@/sync/useAutoSync';
+
+function AppWithSync() {
+  useAutoSync();
+  return null;
+}
 
 const rootRoute = createRootRoute({
   component: AppLayout,
@@ -85,8 +92,11 @@ declare module '@tanstack/react-router' {
 export default function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-      <RouterProvider router={router} />
-      <Toaster />
+      <InternetIdentityProvider>
+        <AppWithSync />
+        <RouterProvider router={router} />
+        <Toaster />
+      </InternetIdentityProvider>
     </ThemeProvider>
   );
 }

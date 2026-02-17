@@ -7,38 +7,99 @@ import { Download, Printer, Save, ArrowLeft } from 'lucide-react';
 import { useSettings } from '@/settings/useSettings';
 import { numberToWords } from '@/billing/amountInWords';
 import { generateBillPdf } from '@/pdf/generateBillPdf';
-import { saveBill } from '@/storage/repositories';
+import { saveBill, saveBillItems, getBillById, getBillItemsByBillId, saveBillPdf } from '@/storage/repositories';
 import { toast } from 'sonner';
+import type { Bill, BillItem } from '@/models/types';
 
 export default function BillPreviewPage() {
   const navigate = useNavigate();
   const { billId } = useParams({ from: '/bill-preview/$billId' });
   const { settings } = useSettings();
   const [billData, setBillData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (billId === 'draft') {
-      const draft = localStorage.getItem('currentBillDraft');
-      if (draft) {
-        setBillData(JSON.parse(draft));
-      }
-    } else {
-      // Load from saved bills
-      // Implementation for loading saved bill
-    }
+    loadBillData();
   }, [billId]);
+
+  const loadBillData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      if (billId === 'draft') {
+        const draft = localStorage.getItem('currentBillDraft');
+        if (draft) {
+          setBillData(JSON.parse(draft));
+        } else {
+          setError('No draft bill found');
+        }
+      } else {
+        // Load saved bill by ID
+        const bill = await getBillById(billId);
+        if (!bill) {
+          setError('Bill not found');
+          return;
+        }
+
+        const items = await getBillItemsByBillId(billId);
+        
+        // Reconstruct bill data in the format expected by the preview
+        const reconstructedBillData = {
+          billId: bill.billId,
+          billNumber: bill.billNumber,
+          customerName: bill.customerName,
+          phone: bill.phone,
+          address: bill.address,
+          date: bill.date,
+          totalAmount: bill.totalAmount,
+          items: items.map(item => ({
+            itemId: item.itemId,
+            description: item.description,
+            basePrice: item.basePrice,
+            quantity: item.quantity,
+            discount: item.discount,
+            gst: item.gst,
+            totalPrice: item.totalPrice,
+          })),
+        };
+
+        setBillData(reconstructedBillData);
+      }
+    } catch (err) {
+      console.error('Error loading bill:', err);
+      setError('Failed to load bill data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSaveAndGenerate = async () => {
     if (!billData) return;
 
     try {
       const pdfBlob = await generateBillPdf(billData, settings);
-      const pdfUrl = URL.createObjectURL(pdfBlob);
       
+      // Save bill without pdfPath (we'll store the blob separately)
       await saveBill({
-        ...billData,
-        pdfPath: pdfUrl,
+        billId: billData.billId,
+        billNumber: billData.billNumber,
+        customerName: billData.customerName,
+        phone: billData.phone,
+        address: billData.address,
+        date: billData.date,
+        totalAmount: billData.totalAmount,
       });
+
+      // Save bill items
+      await saveBillItems(billData.items.map((item: any) => ({
+        ...item,
+        billId: billData.billId,
+      })));
+
+      // Persist PDF blob to IndexedDB
+      await saveBillPdf(billData.billId, pdfBlob);
 
       toast.success('Bill saved successfully!');
       localStorage.removeItem('currentBillDraft');
@@ -86,16 +147,37 @@ export default function BillPreviewPage() {
     }
   };
 
-  if (!billData) {
-    return <div className="text-center py-12">Loading...</div>;
+  if (loading) {
+    return <div className="text-center py-12">Loading bill...</div>;
   }
+
+  if (error) {
+    return (
+      <div className="text-center py-12 space-y-4">
+        <p className="text-destructive text-lg">{error}</p>
+        <Button onClick={() => navigate({ to: '/saved-bills' })}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Saved Bills
+        </Button>
+      </div>
+    );
+  }
+
+  if (!billData) {
+    return <div className="text-center py-12">No bill data available</div>;
+  }
+
+  const isDraft = billId === 'draft';
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Button variant="ghost" onClick={() => navigate({ to: '/create-bill' })}>
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate({ to: isDraft ? '/create-bill' : '/saved-bills' })}
+        >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Edit
+          {isDraft ? 'Back to Edit' : 'Back to Saved Bills'}
         </Button>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handlePrint}>
@@ -106,10 +188,12 @@ export default function BillPreviewPage() {
             <Download className="h-4 w-4 mr-2" />
             Download
           </Button>
-          <Button onClick={handleSaveAndGenerate}>
-            <Save className="h-4 w-4 mr-2" />
-            Save & Generate
-          </Button>
+          {isDraft && (
+            <Button onClick={handleSaveAndGenerate}>
+              <Save className="h-4 w-4 mr-2" />
+              Save & Generate
+            </Button>
+          )}
         </div>
       </div>
 

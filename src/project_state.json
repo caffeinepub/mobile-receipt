@@ -1,151 +1,18 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
-  "summary": "Offline-first web application \"Mobile Receipt\" that mirrors the specified Android app screens/flow: billing/transactions, items & categories, analytics charts, PDF generation with QR, Excel export and local backups, and settings for company info/logo/QR/GST—no login and no cloud dependency.",
+  "projectStateVersion": 3,
+  "summary": "Project named \"Mobile Receipt\"; app name must remain consistent across all pages.",
   "architectural_notes": [
-    "Target is an offline-first web app (not native Android) that mirrors the provided Android screens and flow.",
-    "Use local-first persistence (e.g., IndexedDB/local storage) with no login and no cloud dependency.",
-    "Consider PWA installability + offline caching to support offline usage.",
-    "Navigation behavior confirmed: on mobile screens use a left-side burger-menu drawer (not permanently open); on desktop-size screens keep top tab navigation available."
+    "App name is fixed as \"Mobile Receipt\" and must be consistent across all pages/screens."
   ],
-  "known_issues": [
-    "Deployment/build pipeline is failing with a deployment error; needs investigation and resolution to proceed with deployment."
-  ],
+  "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-implement-an-offline-first-no-login-web-application-named-mobile-receipt-that-works-without-network-connectivity-and-has-no-cloud-dependency-for-core-functionality-all-user-data-persisted-locally-on-the-device-browser",
-      "title": "Implement an offline-first, no-login web application named “Mobile Receipt” that works without network connectivity and has no cloud dependency for core functionality (all user data persisted locally on the device/browser).",
+      "id": "feature-ensure-the-application-name-is-consistently-displayed-as-exactly-mobile-receipt-across-all-pages-and-layouts-by-centralizing-the-app-name-in-a-single-frontend-constant-and-reusing-it-wherever-the-app-name-is-rendered-e-g-start-page-heading-navigation-brand-text-footer-copyright-text-logo-alt-text-and-document-tab-title",
+      "title": "Ensure the application name is consistently displayed as exactly “Mobile Receipt” across all pages and layouts by centralizing the app name in a single frontend constant and reusing it wherever the app name is rendered (e.g., Start page heading, navigation brand text, footer copyright text, logo alt text, and document/tab title).",
       "reqIds": [
         "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-create-responsive-navigation-that-matches-the-requested-flow-on-small-screens-use-a-left-side-burger-menu-navigation-drawer-and-on-tablet-desktop-use-a-top-tab-navigation-menu-include-routes-pages-for-start-dashboard-create-bill-saved-bills-transactions-items-categories-settings-and-export-backup",
-      "title": "Create responsive navigation that matches the requested flow: on small screens use a left-side burger menu (navigation drawer), and on tablet/desktop use a top tab navigation menu. Include routes/pages for Start, Dashboard, Create Bill, Saved Bills/Transactions, Items & Categories, Settings, and Export/Backup.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-build-the-start-page-with-an-app-logo-area-app-name-mobile-receipt-a-simple-welcome-ui-and-a-continue-button-that-navigates-to-the-dashboard",
-      "title": "Build the Start Page with an app logo area, app name (“Mobile Receipt”), a simple welcome UI, and a Continue button that navigates to the Dashboard.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-local-data-models-and-crud-flows-for-categories-item-master-bills-and-bill-items-matching-the-provided-fields-category-categoryid-categoryname-item-master-itemid-itemname-categoryid-baseprice-gstpercentage-bill-billid-billnumber-customername-phone-address-date-totalamount-pdfpath-reference-bill-item-itemid-billid-description-baseprice-quantity-discount-gst-totalprice-purchasedate-slno-as-needed-for-ui",
-      "title": "Implement local data models and CRUD flows for Categories, Item Master, Bills, and Bill Items, matching the provided fields: Category (categoryId, categoryName), Item Master (itemId, itemName, categoryId, basePrice, gstPercentage), Bill (billId, billNumber, customerName, phone, address, date, totalAmount, pdfPath/reference), Bill Item (itemId, billId, description, basePrice, quantity, discount, gst, totalPrice, purchaseDate/slNo as needed for UI).",
-      "reqIds": [
-        "REQ-4"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-create-the-dashboard-home-page-with-auto-updating-analytics-derived-from-locally-saved-bills-sales-summaries-today-this-week-this-month-this-year-and-charts-for-1-monthly-sales-volume-for-the-current-year-2-sales-per-product-and-3-sales-per-category",
-      "title": "Create the Dashboard (Home Page) with auto-updating analytics derived from locally saved bills: sales summaries (Today, This Week, This Month, This Year) and charts for (1) monthly sales volume for the current year, (2) sales per product, and (3) sales per category.",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-the-create-bill-screen-flow-with-customer-details-name-phone-optional-address-date-auto-filled-but-editable-bill-number-auto-generated-but-editable-and-an-items-section-where-items-are-added-from-an-item-master-dropdown-base-price-and-gst-auto-fill-from-the-selected-item-but-remain-editable-per-line-item",
-      "title": "Implement the Create Bill Screen flow with customer details (name, phone, optional address, date auto-filled but editable, bill number auto-generated but editable) and an items section where items are added from an Item Master dropdown; base price and GST auto-fill from the selected item but remain editable per line item.",
-      "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-the-item-and-bill-total-calculation-logic-exactly-as-specified-base-total-base-price-quantity-discount-amount-base-total-discount-gst-amount-base-total-discount-amount-gst-item-total-base-total-discount-amount-gst-amount-bill-total-sum-of-item-totals",
-      "title": "Implement the item and bill total calculation logic exactly as specified: Base Total = Base Price × Quantity; Discount Amount = Base Total × Discount %; GST Amount = (Base Total − Discount Amount) × GST %; Item Total = Base Total − Discount Amount + GST Amount; Bill Total = sum of item totals.",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-create-the-bill-preview-screen-with-a-pdf-like-layout-including-company-logo-name-address-phone-header-from-settings-customer-section-name-phone-address-bill-number-date-items-table-sl-no-purchase-date-item-description-base-price-quantity-discount-gst-total-price-footer-with-grand-total-total-amount-in-words-payment-qr-image-and-a-thank-you-note",
-      "title": "Create the Bill Preview screen with a PDF-like layout including: company logo/name/address/phone header (from Settings), customer section (name/phone/address, bill number, date), items table (Sl. No, Purchase Date, Item Description, Base Price, Quantity, Discount, GST, Total Price), footer with grand total, total amount in words, payment QR image, and a “Thank you” note.",
-      "reqIds": [
-        "REQ-8"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-generate-a-pdf-for-a-bill-from-the-preview-layout-and-store-it-locally-so-it-can-be-opened-later-offline-provide-actions-to-open-share-download-and-print-the-generated-pdf",
-      "title": "Generate a PDF for a bill from the preview layout and store it locally so it can be opened later offline. Provide actions to Open, Share/Download, and Print the generated PDF.",
-      "reqIds": [
-        "REQ-9"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-saved-bills-transactions-screen-to-list-saved-bills-and-allow-viewing-bill-details-opening-the-previously-generated-pdf-and-optionally-re-generating-the-pdf-if-missing-include-basic-search-filter-by-date-range",
-      "title": "Implement Saved Bills / Transactions screen to list saved bills and allow viewing bill details, opening the previously generated PDF, and (optionally) re-generating the PDF if missing. Include basic search/filter by date range.",
-      "reqIds": [
-        "REQ-10"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-settings-screen-fields-stored-locally-company-name-address-phone-upload-change-company-logo-upload-change-payment-qr-code-default-gst-and-local-backup-frequency-daily-weekly-monthly-manual-the-payment-qr-code-must-be-used-by-default-in-preview-pdf-and-be-replaceable-via-settings",
-      "title": "Implement Settings screen fields stored locally: Company Name, Address, Phone, upload/change Company Logo, upload/change Payment QR Code, Default GST %, and Local Backup Frequency (Daily/Weekly/Monthly/Manual). The payment QR code must be used by default in preview/PDF and be replaceable via Settings.",
-      "reqIds": [
-        "REQ-11"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-create-an-export-backup-screen-that-can-generate-excel-xlsx-exports-from-locally-saved-data-weekly-export-monthly-export-and-full-transaction-export-including-bill-details-item-details-totals-and-dates-implement-local-backup-generation-based-on-the-configured-frequency-and-allow-manual-backup-as-well",
-      "title": "Create an Export / Backup screen that can generate Excel (.xlsx) exports from locally saved data: weekly export, monthly export, and full transaction export including bill details, item details, totals, and dates. Implement local backup generation based on the configured frequency and allow Manual backup as well.",
-      "reqIds": [
-        "REQ-12"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-apply-a-coherent-distinctive-visual-theme-across-the-app-colors-typography-layout-suitable-for-a-small-business-billing-tool-avoiding-a-blue-purple-primary-palette-ensure-consistent-ui-patterns-across-all-screens",
-      "title": "Apply a coherent, distinctive visual theme across the app (colors, typography, layout) suitable for a small-business billing tool, avoiding a blue/purple primary palette. Ensure consistent UI patterns across all screens.",
-      "reqIds": [
-        "REQ-13"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-responsive-navigation-so-that-on-mobile-screens-the-burger-menu-button-is-positioned-on-the-left-side-of-the-header-and-opens-a-left-side-drawer-sheet-that-is-not-permanently-open",
-      "title": "Update the responsive navigation so that on mobile screens the burger menu button is positioned on the left side of the header and opens a left-side drawer (Sheet) that is not permanently open.",
-      "reqIds": [
-        "REQ-14"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-breakpoint-behavior-so-the-top-tab-navigation-is-shown-only-on-desktop-sized-viewports-and-the-burger-drawer-navigation-is-used-for-smaller-viewports-including-tablet-sizes-if-applicable",
-      "title": "Update the breakpoint behavior so the top tab navigation is shown only on desktop-sized viewports, and the burger drawer navigation is used for smaller viewports (including tablet sizes if applicable).",
-      "reqIds": [
-        "REQ-15"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-ensure-all-required-build-deploy-configuration-files-and-scripts-are-present-in-the-repository-and-correctly-referenced-by-the-pipeline-e-g-frontend-build-configuration-and-internet-computer-deployment-configuration-correcting-any-missing-or-mislocated-files-that-would-cause-deployment-to-fail",
-      "title": "Ensure all required build/deploy configuration files and scripts are present in the repository and correctly referenced by the pipeline (e.g., frontend build configuration and Internet Computer deployment configuration), correcting any missing or mislocated files that would cause deployment to fail.",
-      "reqIds": [
-        "REQ-18"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-create-bill-item-entry-ui-so-each-bill-line-item-description-can-be-filled-either-by-selecting-an-existing-item-master-catalogue-entry-or-by-manually-typing-a-custom-description-when-the-item-is-not-available-in-the-local-database",
-      "title": "Update the Create Bill item entry UI so each bill line item description can be filled either by selecting an existing Item Master (catalogue) entry or by manually typing a custom description when the item is not available in the local database.",
-      "reqIds": [
-        "REQ-19"
       ],
       "version": 1
     }
@@ -153,82 +20,11 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Build offline-first web app matching the Android-described screens and navigation (drawer on mobile, tabs on tablet/desktop)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Dashboard analytics with auto-updating charts (today/week/month/year summary; monthly sales, sales per product/category)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Create Bill flow: customer details, item list with dropdown from item master, auto-calculations, preview, save transaction",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Bill preview and PDF generation including company header, items table, totals + amount in words, and payment QR code in footer; allow open/share/print",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Transactions management: saved bills list/detail with stored PDF path/reference",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Items & Categories management (category + item master with base price and GST %) used by billing dropdown/autofill",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "Excel export for weekly/monthly/full transactions and item details; local backup with configurable frequency (daily/weekly/monthly/manual) saved as .xlsx",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-8",
-      "summary": "Settings: company name/address/phone, upload logo, upload/change payment QR, default GST %, backup frequency",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-9",
-      "summary": "Offline-only storage (no login, local-first persistence) with optional installable PWA behavior",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-10",
-      "summary": "Identify the exact cause of the current deployment error by reproducing the failure in the project’s build/deploy pipeline and capturing the full error output (including the failing command, stack trace, and file/line references if present).",
-      "reqIds": [
-        "REQ-16"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-11",
-      "summary": "Fix the issue(s) causing the deployment error so that the full project builds and deploys successfully end-to-end.",
-      "reqIds": [
-        "REQ-17"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-12",
-      "summary": "Allow adding bill item descriptions either by selecting from the item master/catalogue or by manually entering a custom item/description when not available in the local database",
+      "summary": "Keep app name consistent across all pages; app name is \"Mobile Receipt\".",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
   "projectName": "Mobile Receipt",
   "clarification_mode": "instant",
   "clarification_rounds": 0

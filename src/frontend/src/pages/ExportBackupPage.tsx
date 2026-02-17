@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Download, Calendar, FileSpreadsheet } from 'lucide-react';
 import { exportToExcel } from '@/export/xlsxExport';
-import { getBills, getBillItems } from '@/storage/repositories';
+import { getBills, getAllBillItems } from '@/storage/repositories';
 import { useSettings } from '@/settings/useSettings';
 import { toast } from 'sonner';
 
@@ -19,7 +19,7 @@ export default function ExportBackupPage() {
   const handleExport = async (type: 'weekly' | 'monthly' | 'full') => {
     try {
       const bills = await getBills();
-      const billItems = await getBillItems();
+      const billItems = await getAllBillItems();
       
       const now = new Date();
       let filteredBills = bills;
@@ -43,7 +43,7 @@ export default function ExportBackupPage() {
   const handleManualBackup = async () => {
     try {
       const bills = await getBills();
-      const billItems = await getBillItems();
+      const billItems = await getAllBillItems();
       await exportToExcel(bills, billItems, 'backup');
       
       const now = new Date().toISOString();
